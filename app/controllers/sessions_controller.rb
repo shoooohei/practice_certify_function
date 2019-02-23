@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+  skip_before_action :signed_in_user, only: [:new, :create]
 
   def new
     @user = User.new
@@ -9,6 +10,7 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:session][:password])
       # Success
       log_in user
+      params[:session][:remember_me] == '1' ? remember(user) : forget(user)
       redirect_to user
     else
       # Failure
@@ -19,6 +21,6 @@ class SessionsController < ApplicationController
 
   def destroy
     log_out
-    redirect_to root_url
+    redirect_to login_path
   end
 end
