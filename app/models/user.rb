@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  attr_accessor :remember_token, :activation_token, :reset_token
+  attr_accessor :remember_token, :activation_token, :reset_token, :changed_email
   before_save   :downcase_email
   before_create :create_activation_digest
 
@@ -61,9 +61,18 @@ class User < ApplicationRecord
     update_attribute(:reset_sent_at, Time.zone.now)
   end
 
+  # メールアドレス再設定のメールを送信する
+  def send_email_reset_email
+    UserMailer.email_reset(self).deliver_now
+  end
+
   # パスワード再設定のメールを送信する
   def send_password_reset_email
     UserMailer.password_reset(self).deliver_now
+  end
+
+  def email_reset_expired?
+    reset_sent_at < 2.hours.ago
   end
 
   def password_reset_expired?
