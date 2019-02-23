@@ -10,7 +10,7 @@ class AccountActivationsController < ApplicationController
     else
       # Failure
       flash[:danger] = "Invalid activation link"
-      redirect_to root_url
+      redirect_to 'http://localhost:3000'
     end
   end
 end
